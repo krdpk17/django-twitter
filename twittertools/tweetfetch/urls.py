@@ -7,5 +7,6 @@ urlpatterns = [
 	#/tweetfetch/
     url(r'^$', views.IndexView.as_view(), name='index'),
 
-    # url(r'^$', TemplateView.as_view(template_name="about.html")),
+    #/tweetfetch/fetcher/add
+    url(r'fetcher/add/$', views.CommandCreate.as_view(), name="fetcher-add"),
 ]

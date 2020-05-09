@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
 
-  <title> {% block title %}Viberr{% endblock title %} </title>
+  <title> {% block title %}TwitterTools{% endblock title %} </title>
     <!--loads the path to your static files -->
     {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -24,7 +24,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Viberr</a>
+                <a class="navbar-brand" href="#">Tools</a>
             </div>
 
             <!-- Items -->
@@ -54,8 +54,8 @@
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="">
-                        <a href="#">
-                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp; Add Album
+                        <a href=" {% url 'tweetfetch:fetcher-add' %} ">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp; Fetcher
                         </a>
                     </li>	
                     <li class="">
