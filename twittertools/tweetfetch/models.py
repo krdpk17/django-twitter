@@ -6,7 +6,7 @@ class Fetcher(models.Model):
     categories_list = models.CharField(max_length=250)
     tweet_filter = models.CharField(max_length = 1000)
     def get_absolute_url(self):
-        return reverse("music:detail", kwargs={"pk": self.pk})
+        return reverse("tweetfetch:index")
     
-    def __str__(self):
-        return self.search_term + '-' + self.categories_list + '-' + self.tweet_filter
+    # def __str__(self):
+    #     return self.search_term + '-' + self.categories_list + '-' + self.tweet_filter
