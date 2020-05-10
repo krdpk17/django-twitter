@@ -8,7 +8,7 @@
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Login</button>
-  <span class="psw"><a href={% url 'tweetfetch:register' %}>Register?</a></span>
+  <span class="psw"><a href={% url 'signup' %}>Register?</a></span>
   <span class="psw">Forget <a href={% url 'password_reset' %}>Password?</a></span>
 </form>
 {% endblock %}
