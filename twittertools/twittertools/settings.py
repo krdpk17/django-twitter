@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'login_required.middleware.LoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -120,6 +121,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 #LOGIN_URL='/tweetfetch/login/'
+LOGIN_URL='/accounts/login'
 LOGIN_REDIRECT_URL = '/tweetfetch'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
