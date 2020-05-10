@@ -5,24 +5,33 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.views.generic.edit import UpdateView 
 
-from .forms import SignUpForm, UserProfileForm
+from .forms import SignUpForm, UserProfileForm, EditUserProfileForm, ProfileChangeForm
 
 
 class UpdateProfile(UpdateView):
     success_url = reverse_lazy('tweetfetch:index')
     template_name = 'account_update.html'
-    form_class = SignUpForm
-    form_profile = UserProfileForm
+    form_class = ProfileChangeForm
+    form_profile = EditUserProfileForm
 
-    # get current user object
-    def get_object(self, queryset=None): 
-        return self.request.user
-    # def get(self, request):
-    #     user = self.request.user
-    #     form = self.form_class.objects.get(pk=user.pk)
-    #     profile_form = self.form_profile.objects.get(user=user)
-    #     context = {'form': form, 'profile_form': profile_form}
-    #     return render(request, self.template_name, context)   
+    def get(self, request):
+        form = ProfileChangeForm(instance=request.user)
+        user_profile_form = EditUserProfileForm(instance=request.user.userprofile)
+        context = {'form': form, 'profile_form': user_profile_form}
+        return render(request, self.template_name, context)   
+
+    def post(self, request):
+        form = self.form_class(request.POST, instance=request.user)
+        profile_form = self.form_profile(request.POST, instance=request.user)
+        context = {'form': form, 'profile_form': profile_form}
+        if form.is_valid() and profile_form.is_valid():
+            form.save()
+
+            # TODO: Fix why this detail is not saved
+            profile_form.save()
+            return redirect('tweetfetch:index')
+                
+        return render(request, self.template_name, context)
 
 class SignUp(generic.CreateView):
     success_url = reverse_lazy('login')

@@ -17,13 +17,35 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')            
 
-class ProfileChangeForm(UserChangeForm):
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email')
-
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('bio', 'location', 'birth_date', 
             'twitter_consumer_key', 'twitter_consumer_secret', 'twitter_user_key', 'twitter_user_secret')
+
+
+'''
+Section for update data
+'''
+class ProfileChangeForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class EditUserProfileForm(forms.ModelForm):
+    """
+    This class is a carbon copy of the UserChangeForm class from
+    django.contrib.auth.forms, with the password functionality deleted, and
+    the form is modified to allow changes to be made to the
+    UserProfle, which extends the Django User
+    """
+    class Meta:
+        model = UserProfile
+        fields = ('bio', 'location', 'birth_date', 
+            'twitter_consumer_key', 'twitter_consumer_secret', 'twitter_user_key', 'twitter_user_secret')
+
+    def __init__(self, *args, **kwargs):
+        super(EditUserProfileForm, self).__init__(*args, **kwargs)
+        f = self.fields.get('user_permissions', None)
+        if f is not None:
+            f.queryset = f.queryset.select_related('content_type')
