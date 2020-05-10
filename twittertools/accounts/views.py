@@ -1,10 +1,20 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.views.generic.edit import UpdateView 
 
-from .forms import SignUpForm
+from .forms import SignUpForm, ProfileChangeForm
+
+class UpdateProfile(UpdateView):
+    success_url = reverse_lazy('tweetfetch:index')
+    template_name = 'account_update.html'
+    form_class = ProfileChangeForm
+
+    # get current user object
+    def get_object(self, queryset=None): 
+        return self.request.user
 
 class SignUp(generic.CreateView):
     form_class = UserCreationForm
