@@ -19,6 +19,7 @@ from django.conf.urls import include,url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')), # new
     path('accounts/', include('django.contrib.auth.urls')), # new
-    url(r'^tweetfetch/', include('tweetfetch.urls')),
+    url(r'^tweetfetch/', include('tweetfetch.urls')), # new
 ]
