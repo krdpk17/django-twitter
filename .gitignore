@@ -6677,3 +6677,7 @@ twittertools/.env/lib/python3.7/site-packages/django_user_accounts-3.0.2.dist-in
 twittertools/.env/lib/python3.7/site-packages/django_user_accounts-3.0.2.dist-info/RECORD
 twittertools/.env/lib/python3.7/site-packages/django_user_accounts-3.0.2.dist-info/top_level.txt
 twittertools/.env/lib/python3.7/site-packages/django_user_accounts-3.0.2.dist-info/WHEEL
+twittertools/accounts/migrations/0001_initial.py
+twittertools/accounts/migrations/0002_auto_20200510_1404.py
+twittertools/accounts/migrations/__pycache__/0001_initial.cpython-37.pyc
+twittertools/accounts/migrations/__pycache__/0002_auto_20200510_1404.cpython-37.pyc
