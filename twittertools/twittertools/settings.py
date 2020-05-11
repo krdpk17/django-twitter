@@ -127,3 +127,18 @@ LOGIN_REDIRECT_URL = '/tweetfetch'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
+LOGIN_REQUIRED_IGNORE_PATHS = [
+    r'/accounts/logout/$'
+    r'/accounts/signup/$',
+    r'/admin/$',
+    r'/admin/login/$',
+    r'/about/$'
+]
+
+LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
+    'home',
+    'login',
+    'signup',
+    'password_reset',
+]
