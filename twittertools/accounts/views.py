@@ -3,7 +3,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from django.views.generic.edit import UpdateView 
+from django.views.generic.edit import UpdateView
+from django.contrib import messages 
 
 from .forms import SignUpForm, UserProfileForm, EditUserProfileForm, ProfileChangeForm
 
@@ -22,13 +23,12 @@ class UpdateProfile(UpdateView):
 
     def post(self, request):
         form = self.form_class(request.POST, instance=request.user)
-        profile_form = self.form_profile(request.POST, instance=request.user)
+        profile_form = self.form_profile(request.POST, instance=request.user.userprofile)
         context = {'form': form, 'profile_form': profile_form}
         if form.is_valid() and profile_form.is_valid():
             form.save()
-
-            # TODO: Fix why this detail is not saved
             profile_form.save()
+            messages.success(request, 'Form submission successful')
             return redirect('tweetfetch:index')
                 
         return render(request, self.template_name, context)
