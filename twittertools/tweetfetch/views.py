@@ -15,4 +15,4 @@ class IndexView(generic.ListView):
 
 class CommandCreate(CreateView):
     model = Fetcher
-    fields = ['search_term', 'categories_list', 'tweet_filter']
+    fields = ['search_term', 'categories', 'need_filter', 'retweets_of']
