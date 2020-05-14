@@ -9,5 +9,5 @@ class Fetcher(models.Model):
     def get_absolute_url(self):
         return reverse("tweetfetch:index")
     
-    # def __str__(self):
-    #     return self.search_term + '-' + self.categories_list + '-' + self.tweet_filter
+    def __str__(self):
+        return self.search_term + '-' + self.categories

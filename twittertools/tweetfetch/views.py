@@ -3,8 +3,9 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.contrib import messages
 
-from .models import Fetcher
+from .forms import FetcherCreateForm
 
 
 class IndexView(generic.ListView):
@@ -14,5 +15,18 @@ class IndexView(generic.ListView):
         return
 
 class CommandCreate(CreateView):
-    model = Fetcher
-    fields = ['search_term', 'categories', 'need_filter', 'retweets_of']
+    form_class = FetcherCreateForm
+    success_url = reverse_lazy('tweetsfetch:index')
+    template_name = 'tweetfetch/fetcher_form.html'
+
+    def get(self, request):
+        form = self.form_class(None)
+        context = {'form': form}
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        context = {'form': form}
+        #TODO: Store this info in the Database
+        messages.success(request, 'TBD')
+        return render(request, self.template_name, context)
