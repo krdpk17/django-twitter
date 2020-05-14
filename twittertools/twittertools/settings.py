@@ -125,8 +125,18 @@ STATIC_URL = '/static/'
 LOGIN_URL='/accounts/login'
 LOGIN_REDIRECT_URL = '/tweetfetch'
 LOGOUT_REDIRECT_URL = '/accounts/login'
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
+
+EMAIL_USE_TLS = True
+#DEFAULT_FROM_EMAIL = 'krdpk1717@gmail.com'
+#SERVER_EMAIL = 'krdpk1717@gmail.com'
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_PORT = '2525'
+EMAIL_HOST_USER = '9ae637f3ace963'
+EMAIL_HOST_PASSWORD = 'c3732f9bec0431'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+#EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 LOGIN_REQUIRED_IGNORE_PATHS = [
     r'/accounts/logout/$'
@@ -141,4 +151,9 @@ LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
     'login',
     'signup',
     'password_reset',
+    'password_reset_done',
+    'password_change',
+    'password_change_done',
+    'password_reset_confirm',
+    'password_reset_complete',
 ]
