@@ -29,5 +29,9 @@ class CommandCreate(CreateView):
         context = {'form': form}
         #TODO: Store this info in the Database
         status = store_fetch_query(form.data, request.user)
-        messages.success(request, 'TBD')
-        return render(request, self.template_name, context)
+        if status:
+            messages.success(request, 'Stored query in the DB')
+            return redirect('tweetfetch:index')
+        else:
+            messages.error(request, 'Failed to store query. Please retry')
+            return render(request, self.template_name, context)
