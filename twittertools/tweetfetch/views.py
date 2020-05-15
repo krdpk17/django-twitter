@@ -22,7 +22,7 @@ class CommandList(ListView):
 
     def get(self, request):
         queries = fetch_all_queries_by_user(request.user)
-        istekler = self.fetcher_table(queries)
+        table = self.fetcher_table(queries)
         #istekler = queries.all()
 
         return render(request, self.template_name, locals())
