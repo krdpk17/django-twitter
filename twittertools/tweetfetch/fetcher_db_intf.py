@@ -7,17 +7,17 @@ def fetch_all_queries_by_user(user):
 
 def store_fetch_query(query, user):
     #Fetch query and the user info
-    fields = ['search_term', 'categories', 'need_filter' ]
+    fields = ['search_term', 'categories', 'filter' ]
     query_json = {}
     for key, value in query.items():
         if key in fields:
             query_json[key] = value
-    if 'need_filter' in query_json and query_json['need_filter']=='on':
+    if 'need_filter' in query_json and query_json['filter']=='on':
         filter_json = {"retweets_of":query['retweets_of']}
         query_json['tweet_filter'] = filter_json
-        query_json['need_filter']='yes'
+        query_json['filter']='on'
     else:
-        query_json['need_filter']='no'
+        query_json['filter']='off'
     search_query_json = {"tweet_search":query_json}
     queries = [search_query_json]
     userinfo = {'username':user.username, 'email':user.email}
