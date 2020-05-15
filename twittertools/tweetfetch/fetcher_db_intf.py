@@ -18,8 +18,8 @@ def store_fetch_query(query, user):
         query_json['need_filter']='yes'
     else:
         query_json['need_filter']='no'
-
-    queries = [query_json]
+    search_query_json = {"tweet_search":query_json}
+    queries = [search_query_json]
     userinfo = {'username':user.username, 'email':user.email}
     status = fetcher_query_store.add_new_query(queries=queries, user=userinfo)
     return status
