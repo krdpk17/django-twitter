@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig', # new
     'tweetfetch.apps.TweetfetchConfig', # new
+    'django_tables2', # new
 ]
 
 MIDDLEWARE = [

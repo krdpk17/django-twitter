@@ -55,6 +55,11 @@
 
                     <ul class="nav navbar-nav navbar-right">
                         <li class="">
+                            <a href=" {% url 'tweetfetch:fetcher-list' %} ">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp; List
+                            </a>
+                        </li>	
+                        <li class="">
                             <a href=" {% url 'tweetfetch:fetcher-add' %} ">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp; Fetcher
                             </a>
