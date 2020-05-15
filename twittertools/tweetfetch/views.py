@@ -6,7 +6,7 @@ from django.views.generic import View
 from django.contrib import messages
 
 from .forms import FetcherCreateForm
-
+from .fetcher_db_intf import store_fetch_query
 
 class IndexView(generic.ListView):
     template_name = 'tweetfetch/index.html'
@@ -28,5 +28,6 @@ class CommandCreate(CreateView):
         form = self.form_class(request.POST)
         context = {'form': form}
         #TODO: Store this info in the Database
+        status = store_fetch_query(form.data, request.user)
         messages.success(request, 'TBD')
         return render(request, self.template_name, context)
