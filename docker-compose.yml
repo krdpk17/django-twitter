@@ -9,12 +9,6 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - twitter-web-pgdata:/var/lib/postgresql/data
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "udp://logs5.papertrailapp.com:50431"
-        syslog-format: "rfc3164"
-        tag: "django-db"
   web:
     build: .
     image: django-twittertools
@@ -25,12 +19,6 @@ services:
       - 8000
     depends_on:
       - db
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "udp://logs5.papertrailapp.com:50431"
-        syslog-format: "rfc3164"
-        tag: "django-twitter-web"
   nginx:
     image: nginx
     ports:
@@ -42,38 +30,20 @@ services:
       - ./privkey.pem:/etc/ssl/privkey.pem
     depends_on:
       - web
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "udp://logs5.papertrailapp.com:50431"
-        syslog-format: "rfc3164"
-        tag: "django-nginx"
   migration:
-    image: django-twittersystem
+    image: django-twittertools
     command: bash -c "python manage.py migrate && python manage.py migrate --run-syncdb"
     depends_on:
       - db
       - web
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "udp://logs5.papertrailapp.com:50431"
-        syslog-format: "rfc3164"
-        tag: "django-migration"
   createsuperuser:
-    image: django-twittersystem
+    image: django-twittertools
     command: ./manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('${DUSER}', 'admin@example.com', '${DPASS}')"
 
     depends_on:
       - db
       - web
       - migration
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "udp://logs5.papertrailapp.com:50431"
-        syslog-format: "rfc3164"
-        tag: "django-createuser"
 
 volumes: 
   twitter-web-pgdata:
