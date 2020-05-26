@@ -32,7 +32,7 @@ services:
       - web
   migration:
     image: django-twittertools
-    command: bash -c "python3 manage.py makemigrations && python manage.py migrate && python manage.py migrate --run-syncdb"
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py migrate --run-syncdb"
     depends_on:
       - db
       - web
