@@ -5,4 +5,4 @@ ENV DJANGO_ALLOWED_HOSTS='127.0.0.1'
 COPY requirements.txt /twittertools/
 RUN pip install -r requirements.txt
 COPY ./twittertools/. /twittertools/
-RUN pip install -r twittertools/tweetfetch/neo4jintf/docker/features/requirements.txt
+RUN pip install -r tweetfetch/neo4jintf/docker/features/requirements.txt
