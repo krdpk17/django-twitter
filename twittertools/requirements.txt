@@ -1,4 +1,7 @@
+gunicorn
+psycopg2
 django
 django-login-required-middleware
 django-tables2
 django-bootstrap3
+dj-static

@@ -1,0 +1,80 @@
+version: '3'
+  
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - twitter-web-pgdata:/var/lib/postgresql/data
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://logs5.papertrailapp.com:50431"
+        syslog-format: "rfc3164"
+        tag: "django-db"
+  web:
+    build: .
+    image: django-twittertools
+    environment:
+      - DJANGO_ALLOWED_HOSTS='*'
+    command: bash -c "gunicorn wsgi:application --bind 0.0.0.0:8000"
+    expose:
+      - 8000
+    depends_on:
+      - db
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://logs5.papertrailapp.com:50431"
+        syslog-format: "rfc3164"
+        tag: "django-twitter-web"
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./fullchain.pem:/etc/ssl/fullchain.pem
+      - ./privkey.pem:/etc/ssl/privkey.pem
+    depends_on:
+      - web
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://logs5.papertrailapp.com:50431"
+        syslog-format: "rfc3164"
+        tag: "django-nginx"
+  migration:
+    image: django-twittersystem
+    command: bash -c "python manage.py migrate && python manage.py migrate --run-syncdb"
+    depends_on:
+      - db
+      - web
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://logs5.papertrailapp.com:50431"
+        syslog-format: "rfc3164"
+        tag: "django-migration"
+  createsuperuser:
+    image: django-twittersystem
+    command: ./manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('${DUSER}', 'admin@example.com', '${DPASS}')"
+
+    depends_on:
+      - db
+      - web
+      - migration
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://logs5.papertrailapp.com:50431"
+        syslog-format: "rfc3164"
+        tag: "django-createuser"
+
+volumes: 
+  twitter-web-pgdata:
+    #external: true
