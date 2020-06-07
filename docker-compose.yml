@@ -9,6 +9,11 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - twitter-web-pgdata:/var/lib/postgresql/data
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "2m"
+            max-file: "2"
   web:
     build: .
     image: django-twittertools
@@ -17,6 +22,11 @@ services:
     volumes:
       - ./.env:/twittertools/tweetfetch/neo4jintf/docker/features/config/.env
     command: bash -c "gunicorn wsgi:application --bind 0.0.0.0:8000"
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "2m"
+            max-file: "2"
     expose:
       - 8000
     depends_on:
@@ -30,18 +40,32 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ./fullchain.pem:/etc/ssl/fullchain.pem
       - ./privkey.pem:/etc/ssl/privkey.pem
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "2m"
+            max-file: "2"
     depends_on:
       - web
   migration:
     image: django-twittertools
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py migrate --run-syncdb"
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "2m"
+            max-file: "2"
     depends_on:
       - db
       - web
   createsuperuser:
     image: django-twittertools
     command: ./manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('${DUSER}', 'admin@example.com', '${DPASS}')"
-
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "2m"
+            max-file: "2"
     depends_on:
       - db
       - web
