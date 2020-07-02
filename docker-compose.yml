@@ -34,8 +34,7 @@ services:
   nginx:
     image: nginx
     ports:
-      - 9080:80
-      - 9443:443
+      - ${WEBSITE_HTTPS_PORT}:443
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ./fullchain.pem:/etc/ssl/fullchain.pem
