@@ -20,7 +20,7 @@ services:
     environment:
       - DJANGO_ALLOWED_HOSTS='*'
     volumes:
-      - ./.env:/twittertools/tweetfetch/neo4jintf/docker/features/config/.env
+      - ./.env_db:/twittertools/tweetfetch/neo4jintf/docker/features/config/.env
     command: bash -c "gunicorn wsgi:application --bind 0.0.0.0:8000"
     logging:
         driver: "json-file"
