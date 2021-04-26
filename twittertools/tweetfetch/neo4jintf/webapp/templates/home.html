@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Graph your Twitter Network in Neo4j</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/agency.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style type="text/css">
+    .metrics {
+        align: center;
+        width: 250px;
+        text-align: left;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        font-size: 16px;
+        text-transform: none;
+        font-weight: 400;
+        font-size: 22px;
+        font-family:"Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    </style>
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">Graph your Network!</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#datamodel">Data Model</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#browser">Browser</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#queries">Queries</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#faq">FAQ</a>
+                    </li>
+                    <li style="padding-top: 10px; padding-left: 10px;">
+                      <a class="twitter-share-button" href="https://twitter.com/intent/tweet" data-size="large" data-count="none" data-url="http://network.graphdemos.com/"></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="intro-text" style="margin-top: 100px; padding-top: 10px; padding-bottom: 10px; background-color: #fed136; color: black; font-weight: bold; font-size: 20px;">
+              NOTICE: This app is deprecated.  Please use the Twitter Neo4j Sandbox instead: <a href="https://neo4j.com/sandbox">https://neo4j.com/sandbox</a>.
+            </div>
+        </div>
+        <div class="container">
+            <div class="intro-text">
+                <div class="intro-lead-in">See your Network!</div>
+                <div class="intro-heading">Graph your Twitter activity in Neo4j!</div>
+                {% if user is defined %}
+	        <h3 class="section-subheading">Logged in as: {{ user }} </h3>
+                <p><center><a href="/logout" style="color: #fed136">Logout</a></center></p>
+                {% else %}
+                <a href="/login?next=http://network.graphdemos.com/%23browser"><img src="http://www.portlandbuttonworks.com/image/data/twitter.png" /></a>
+                <br>by logging in, you agree to the <a href="http://neo4j.com/terms/">terms</a> and <a href="/privacy">privacy policy</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <section id="datamodel" class="bg-light-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Data Model</h2>
+                    <h3 class="section-subheading text-muted">The Graph model we use to load your data.</h3>
+                    <p><img src="/img/data-model.svg" width="600"></p>
+                </div>
+             </div>
+         </div>
+    </section>
+
+    <!-- Browser Section -->
+    <section id="browser">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Neo4j Browser</h2>
+                    <h3 class="section-subheading text-muted">Use the Browser to Explore your Graph.</h3>
+                    <p class="text-muted">We're now loading your Tweets from the Twitter API as well as a mixture of other tweets which may be popular to Graph Database enthusiasts.  <br />Note that the Twitter API has quotas which mean your Tweets have to be loaded over time, depending on how much Twitter activity you have.<br /></p>
+                    <span id="node_metrics" style="display:none">
+                    <div class="metrics text-muted">
+                        Users Loaded: <span id="node_metrics_users"></span><br />
+                        Tweets Loaded: <span id="node_metrics_tweets"></span>
+                        Hashtags Loaded: <span id="node_metrics_hashtags"></span>
+                        Links Loaded: <span id="node_metrics_links"></span>
+                    </div>
+                    </span>
+                    <p class="subsection-heading"><a href="#" id="browser_link" target="_blank"><img src="img/neo4j-browser.png" width="500"></a></p>
+                    <h3 class="section-subheading"><span id="n4j_url"></span></h3>
+                    <p class="text-muted">Access your personal instance of Neo4j using the URL, username, and password above. We'll keep your instance around for a few days, but you can always come back and get a new instance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QueriesSection -->
+    <section id="queries" class="bg-light-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Example Queries</h2>
+                    <h3 class="section-subheading text-muted">Try these queries in the <a href="#browser">Browser</a> yourself to explore your data.</h3>
+                    <h3 class="section-subheading text-muted">Until all your data is fully loaded, results may not be accurate.</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-left: 10px; padding-bottom: 10px;">
+          <div class="col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-0">
+            <table>
+              <tr style="text-align: center;font-family:Montserrat,Helvetica Neue,Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700">
+                <td>Top Mentions of You</td>
+              </tr>
+              <tr style="vertical-align: top">
+                <td id="top_mentions_query">
+                  <pre>MATCH
+  (u:User)-[:POSTS]-&gt;(t:Tweet)-[:MENTIONS]-&gt;(m:User {screen_name:'{{ user }}'})
+WHERE 
+  u.screen_name &lt;&gt; '{{ user }}'
+RETURN
+  u.screen_name AS screen_name, COUNT(u.screen_name) AS count 
+ORDER BY 
+  count 
+DESC LIMIT 10</pre>
+                </td>
+              </tr>
+              <tr>
+                <td id="top_mentions_results"></td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-0">
+            <table>
+              <tr style="text-align: center;font-family:Montserrat,Helvetica Neue,Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700">
+                <td>Most Tagged by You</td>
+              </tr>
+              <tr style="vertical-align: top">
+                <td id="most_tagged_query">
+                  <pre>MATCH
+  (h:Hashtag)&lt;-[:TAGS]-(t:Tweet)&lt;-[:POSTS]-(u:User {screen_name:'{{ user }}'})
+WITH 
+  h, COUNT(h) AS Hashtags
+ORDER BY 
+  Hashtags DESC
+LIMIT 10
+RETURN 
+  h.name, Hashtags</pre>
+                </td>
+              </tr>
+              <tr>
+                <td id="most_tagged_results"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="row" style="padding-left: 10px; padding-bottom: 10px;">
+          <div class="col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-0">
+            <table>
+              <tr style="text-align: center;font-family:Montserrat,Helvetica Neue,Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700">
+                <td>Followback Rate</td>
+              </tr>
+              <tr style="vertical-align: top">
+                <td id="followback_rate_query">
+                  <pre>MATCH (me:User {screen_name: '{{ user }}'})-[:FOLLOWS]-&gt;(f)
+WITH me, f, size((f)-[:FOLLOWS]-&gt;(me)) as doesFollowBack
+RETURN sum(doesFollowBack) / toFloat(count(f))  AS followBackRate</pre>
+                </td>
+              </tr>
+              <tr>
+                <td id="followback_rate_results"></td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-0">
+            <table>
+              <tr style="text-align: center;font-family:Montserrat,Helvetica Neue,Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700">
+                <td>Users tweeting about You, but you Don't Follow</td>
+              </tr>
+              <tr style="vertical-align: top">
+                <td id="mentioning_users_query">
+                  <pre>MATCH (ou:User)-[:POSTS]-&gt;(t:Tweet)-[mt:MENTIONS]-&gt;(me:User {screen_name: '{{ user }}'})
+WITH DISTINCT ou, me
+WHERE (ou)-[:FOLLOWS]-&gt;(me)
+AND NOT (me)-[:FOLLOWS]-&gt;(ou)
+RETURN ou.screen_name
+LIMIT 20</pre>
+                </td>
+              </tr>
+              <tr>
+                <td id="mentioning_users_results"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="row" style="padding-left: 10px">
+          <div class="col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-0">
+            <table>
+              <tr style="text-align: center;font-family:Montserrat,Helvetica Neue,Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700">
+                <td>Links from Interesting Retweets</td>
+              </tr>
+              <tr style="vertical-align: top">
+                <td id="interesting_links_query">
+                  <pre>MATCH (:User {screen_name: '{{ user }}'})-[:POSTS]-&gt;
+  (t:Tweet)-[:RETWEETS]-&gt;(rt)-[:CONTAINS]-&gt;(link:Link)
+RETURN t.id_str AS tweet, link.url AS url, rt.favorites AS favorites
+ORDER BY favorites DESC LIMIT 10</pre>
+                </td>
+              </tr>
+              <tr>
+                <td id="interesting_links_results"></td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-0">
+            <table>
+              <tr style="text-align: center;font-family:Montserrat,Helvetica Neue,Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700">
+                <td>Users tweeting with common tags as you</td>
+              </tr>
+              <tr style="vertical-align: top">
+                <td id="common_tags_query">
+                  <pre>MATCH (me:User {screen_name:'{{ user }}'})-[:POSTS]-&gt;(tweet:Tweet)-[:TAGS]-&gt;(ht)
+OPTIONAL MATCH (tweet)&lt;-[:RETWEETS]-(retweet)
+WITH me,ht, collect(distinct retweet) as retweets
+MATCH (ht)&lt;-[:TAGS]-(tweet2:Tweet)&lt;-[:POSTS]-(sugg:User)
+WHERE sugg &lt;&gt; me and NOT(tweet2 IN retweets)
+WITH sugg, count(distinct(ht)) as common
+RETURN sugg.screen_name as friend, common
+ORDER BY common DESC
+LIMIT 20</pre>
+                </td>
+              </tr>
+              <tr>
+                <td id="common_tags_results"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">FAQ</h2>
+                </div>
+            </div>
+            <div class="row">
+<ul class="list-group">
+  <li class="list-group-item"><b>How long does my Neo4j instance last?</b><br />
+    We keep your instance alive for about 3 days.  After that, you'll get a new instance when you login.
+  </li>
+  <li class="list-group-item"><b>What are the terms of use?</b><br />
+    By logging in, you agree to the <a href="http://neo4j.com/terms/">terms</a> and <a href="/privacy">privacy policy</a>.  The software is <a href="https://github.com/neo4j-contrib/twitter-neo4j">available on GitHub</a/> and licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2 license</a>.
+  </li>
+</ul>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            (<a href="http://neo4j.com/terms/">terms</a>) (<a href="/privacy">privacy policy</a>)
+          </div>
+          <div class="col-md-4">
+            <a href="http://neo4j.com/"><img src="img/neo4j_logo_sm.png" height="50"></a>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline social-buttons">
+              <li><a href="http://twitter.com/neo4j/"><i class="fa fa-twitter"></i></a></li>
+              <li><a href="https://www.facebook.com/neo4j.graph.database"><i class="fa fa-facebook"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="js/classie.js"></script>
+    <script src="js/cbpAnimatedHeader.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/agency.js"></script>
+
+    <!-- Twitter tweet button code -->
+    <script>window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+     
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+     
+      return t;
+    }(document, "script", "twitter-wjs"));</script>
+
+    <script type="text/javascript">
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+           m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+       //Allow Linker
+       ga('create', 'UA-1192232-34','auto', {'allowLinker': true});
+       ga('send', 'pageview');
+       // Load the plugin.
+       ga('require', 'linker');
+       // Define which domains to autoLink.
+       ga('linker:autoLink', ['neo4j.org','neo4j.com','graphdemos.com','graphdatabases.com','graphconnect.com']);
+   </script>
+
+    {% if check_for_url %}
+      <script>
+        function updateNodeCount() {
+          $.ajax('/neo4j-node-count', {
+            success: function(data) {
+              setTimeout(updateNodeCount,5000);
+              $('#node_metrics_users').text(data.count_User);
+              $('#node_metrics_tweets').text(data.count_Tweet);
+              $('#node_metrics_hashtags').text(data.count_Hashtag);
+              $('#node_metrics_links').text(data.count_Link);
+            },
+            error: function() {
+             $('#browser_link').attr('href', '#');
+             $('#n4j_url').html('Neo4j instance may be expired.  Try refreshing your browser.');
+            }
+          });
+        }
+        $('#n4j_url').html('<i>Creating Neo4j instance...</i>')
+
+        $.ajax('/get_n4j_url', {
+          success: function(data) {
+             $('#n4j_url').html(
+               'URL: <a href="' + data.neo4j_url + '" target="_blank">' + data.neo4j_url + '</a>' +
+               '<br />' +
+               'Username: neo4j' +
+               '<br />' +
+               'Password: ' + data.neo4j_password );
+             $('#browser_link').attr('href', data.neo4j_url);
+             $('#node_metrics').show();
+             setTimeout(updateNodeCount,4000);
+             setTimeout(updateQueries,15000);
+          },
+          error: function() {
+             $('#n4j_url').html('Error creating Neo4j instance. Try refreshing the browser.');
+          }
+        });
+
+        function updateQueries() {
+            $.ajax('/exec-query?query=mentions', {
+              success: function(data) {
+                 var headers = ['Screen Name', 'Count']
+                 var $table = $('<table width="100%" class="table table-striped table-hover">');
+                 var $headTr = $('<tr>').addClass('header');
+                 $.each(headers, function(i,header){
+                     $headTr.append($('<th>').append($('<span>').text(header)));
+                 });
+                 $headTr.append($('<th><span id="tweet_button_mentions"></span></th>'));
+                 $headTr.appendTo($table);
+   
+                 var topTweeter = ''; 
+                 var topTweetCount = ''; 
+                 $.each(data.results, function(i,dataRow){
+                     if (i == 0) {
+                       topTweeter = dataRow.screen_name;
+                       topTweetCount  = dataRow.count;
+                     }
+                     var $dataTr = $('<tr>');
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.screen_name)));
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.count)));
+                     $dataTr.appendTo($table);
+                 });
+                 $('#top_mentions_results').empty().append($table);
+                 twttr.widgets.createShareButton(
+                   'http://network.graphdemos.com/',
+                    document.getElementById('tweet_button_mentions'),
+                    {
+                      text: '.@' + topTweeter + ' mentioned me ' + topTweetCount + 'x. Discovered via @Neo4j Graph Your Network: ',
+                      count: 'none'
+                    }
+                 ); 
+            
+                 // refresh every 2 minutes
+                 setTimeout(updateQueries,120000);
+              },
+              error: function() {
+                 //$('#n4j_url').html('error');
+              }
+            });
+            $.ajax('/exec-query?query=tags', {
+              success: function(data) {
+                 var headers = ['Hashtag', 'Count']
+                 var $table = $('<table width="100%" class="table table-striped table-hover">');
+                 var $headTr = $('<tr>').addClass('header');
+                 $.each(headers, function(i,header){
+                     $headTr.append($('<th>').append($('<span>').text(header)));
+                 });
+                 $headTr.append($('<th><span id="tweet_button_tags"></span></th>'));
+                 $headTr.appendTo($table);
+   
+                 var topHashtags = '';
+ 
+                 $.each(data.results, function(i,dataRow){
+                     if (i <= 2) {
+                         topHashtags += '#' + dataRow.tag + ' '
+                     }
+                     var $dataTr = $('<tr>');
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.tag)));
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.count)));
+                     $dataTr.appendTo($table);
+                 });
+                 $('#most_tagged_results').empty().append($table);
+                 twttr.widgets.createShareButton(
+                   'http://network.graphdemos.com/',
+                    document.getElementById('tweet_button_tags'),
+                    {
+                      text: 'The top #hashtags I\'ve used are: ' + topHashtags + '. Discovered via @Neo4j Graph Your Network: ',
+                      count: 'none'
+                    }
+                 ); 
+              },
+              error: function() {
+                 //$('#n4j_url').html('error');
+              }
+            });
+            $.ajax('/exec-query?query=interesting_links', {
+              success: function(data) {
+                 var headers = ['Tweet', 'Link', 'Favorites']
+                 var $table = $('<table width="100%" class="table table-striped table-hover">');
+                 var $headTr = $('<tr>').addClass('header');
+                 $.each(headers, function(i,header){
+                     $headTr.append($('<th>').append($('<span>').text(header)));
+                 });
+                 $headTr.appendTo($table);
+    
+                 $.each(data.results, function(i,dataRow){
+                     var $dataTr = $('<tr>');
+                     var $tweetLink = $('<a>').attr('href', 'http://twitter.com/{{ user }}/status/' + dataRow.tweet);
+                     var $urlLink = $('<a>').attr('href', dataRow.url);
+                     $dataTr.append($('<td>').append($('<span>').append($tweetLink.text('tweet'))));
+                     $dataTr.append($('<td>').append($('<span>').append($urlLink.text(dataRow.url))));
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.favorites)));
+                     $dataTr.appendTo($table);
+                 });
+                 $('#interesting_links_results').empty().append($table);
+              },
+              error: function() {
+                 //$('#n4j_url').html('error');
+              }
+            });
+            $.ajax('/exec-query?query=followback_rate', {
+              success: function(data) {
+                 var headers = ['Followback Rate']
+                 var $table = $('<table width="100%" class="table table-striped table-hover">');
+                 var $headTr = $('<tr>').addClass('header');
+                 $.each(headers, function(i,header){
+                     $headTr.append($('<th>').append($('<span>').text(header)));
+                 });
+                 $headTr.appendTo($table);
+    
+                 $.each(data.results, function(i,dataRow){
+                     var $dataTr = $('<tr>');
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.rate)));
+                     $dataTr.appendTo($table);
+                 });
+                 //$table.appendTo('#followback_rate_results');
+                 $('#followback_rate_results').empty().append($table);
+              },
+              error: function() {
+                 //$('#n4j_url').html('error');
+              }
+            });
+            $.ajax('/exec-query?query=mentioning_users_follow', {
+              success: function(data) {
+                 var headers = ['User']
+                 var $table = $('<table width="100%" class="table table-striped table-hover">');
+                 var $headTr = $('<tr>').addClass('header');
+                 $.each(headers, function(i,header){
+                     $headTr.append($('<th>').append($('<span>').text(header)));
+                 });
+                 $headTr.appendTo($table);
+    
+                 $.each(data.results, function(i,dataRow){
+                     var $dataTr = $('<tr>');
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.user)));
+                     $dataTr.appendTo($table);
+                 });
+                 //$table.appendTo('#mentioning_users_results');
+                 $('#mentioning_users_results').empty().append($table);
+              },
+              error: function() {
+                 //$('#n4j_url').html('error');
+              }
+            });
+            $.ajax('/exec-query?query=common_tags', {
+              success: function(data) {
+                 var headers = ['User', 'Common Tags']
+                 var $table = $('<table width="100%" class="table table-striped table-hover">');
+                 var $headTr = $('<tr>').addClass('header');
+                 $.each(headers, function(i,header){
+                     $headTr.append($('<th>').append($('<span>').text(header)));
+                 });
+                 $headTr.appendTo($table);
+    
+                 $.each(data.results, function(i,dataRow){
+                     var $dataTr = $('<tr>');
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.user)));
+                     $dataTr.append($('<td>').append($('<span>').text(dataRow.common)));
+                     $dataTr.appendTo($table);
+                 });
+                 $('#common_tags_results').empty().append($table);
+              },
+              error: function() {
+                 //$('#n4j_url').html('error');
+              }
+            });
+        }
+      </script>
+    {% endif %}
+</body>
+
+</html>
