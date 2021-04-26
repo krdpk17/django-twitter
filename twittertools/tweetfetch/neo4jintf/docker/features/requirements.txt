@@ -1,6 +1,0 @@
-python-dotenv
-oauth2
-py2neo==2020.0.0
-retrying
-requests
-requests-oauthlib
